@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  current_mode_id: 
+  current_x_res: 1
+  current_position: MyString
+  current_light: MyString
+  current_now: 
+
+two:
+  current_mode_id: 
+  current_x_res: 1
+  current_position: MyString
+  current_light: MyString
+  current_now: 

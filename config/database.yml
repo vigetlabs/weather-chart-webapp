@@ -1,0 +1,18 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: <%= `whoami` %>
+  password:
+
+development:
+  <<: *default
+  database: weatherchart_dev
+
+test:
+  <<: *default
+  database: weatherchart_test
+
+production:
+  <<: *default
+  database: weatherchart_prod
