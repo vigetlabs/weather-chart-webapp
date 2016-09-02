@@ -28,12 +28,12 @@ class DataPointsController < ApplicationController
       if @old_packet != @new_packet
         client = ParticleCaller.new(ENV["PARTICLE_DEVICE_ID"])
         if client.function("trigger", @new_packet)
-          response_string = "SUCCESS | MADE PARTICLE CALL"
+          puts response_string = "SUCCESS | MADE PARTICLE CALL"
         else
-          response_string = "FAILURE | MADE PARTICLE CALL"
+          puts response_string = "FAILURE | MADE PARTICLE CALL"
         end
       else
-        response_string = "DID NOT MAKE PARTICLE CALL"
+        puts response_string = "DID NOT MAKE PARTICLE CALL"
       end
 
       #TODO delete old unsued data points
@@ -72,12 +72,18 @@ class DataPointsController < ApplicationController
 
     6.times do |i|
       values[i] = DataPoint.where(value_timestamp: Time.now.beginning_of_hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
-      values[i] = values[i].value.to_i
-      if values[i] < value_min
-        value_min = values[i]
-      end
-      if values[i] > value_max
-        value_max = values[i]
+      if values[i].nil?
+        values[i] = rand(20..80)
+        value_min = 0
+        value_max = 100
+      else
+        values[i] = values[i].value.to_i
+        if values[i] < value_min
+          value_min = values[i]
+        end
+        if values[i] > value_max
+          value_max = values[i]
+        end
       end
     end
 
