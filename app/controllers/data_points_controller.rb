@@ -1,6 +1,4 @@
 class DataPointsController < ApplicationController
-  require WundergroundCaller
-
   def act
     response_string = ""
 
