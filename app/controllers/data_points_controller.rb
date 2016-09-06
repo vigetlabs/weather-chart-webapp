@@ -28,9 +28,9 @@ class DataPointsController < ApplicationController
       if @old_packet != @new_packet
         client = ParticleCaller.new(ENV["PARTICLE_DEVICE_ID"])
         if client.function("trigger", @new_packet)
-          puts response_string = "SUCCESS | MADE PARTICLE CALL"
+          puts response_string = "SUCCESS - MADE PARTICLE CALL"
         else
-          puts response_string = "FAILURE | MADE PARTICLE CALL"
+          puts response_string = "FAILURE - TRIED PARTICLE CALL"
         end
       else
         puts response_string = "DID NOT MAKE PARTICLE CALL"
