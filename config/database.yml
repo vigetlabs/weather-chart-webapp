@@ -11,8 +11,8 @@ development:
 
 test:
   <<: *default
-  database: weatherchart_test
+  database: weatherchart_dev
 
 production:
   <<: *default
-  database: weatherchart_prod
+  database: weatherchart_dev

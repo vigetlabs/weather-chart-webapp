@@ -1,1 +1,0 @@
-require 'wunderground_caller'
