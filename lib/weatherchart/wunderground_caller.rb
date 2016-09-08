@@ -24,13 +24,12 @@ class WundergroundCaller
   end
 
   def get_precipitations()
-    #todo
-    #qpf, english
-    #pop
-    #mslp, english
-  end
-
-  def get_pressures()
-    #todo
+    puts response = JSON.parse(get_hourly_weather.to_json)
+    precip = {}
+    response['hourly_forecast'].each do |response|
+      time = response['FCTTIME']['epoch']
+      precip = response['mslp']['english'] #mslp = POP, Probability of Precipitation, qpf = Quantitative Precipitation Forecast
+      temp[time] = temperature
+    end
   end
 end

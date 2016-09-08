@@ -8,21 +8,26 @@ class DataPointsController < ApplicationController
 
       @settings = Setting.first
       @old_packet = construct_packet          #generate old packet from current data
-      @temperatures = WundergroundCaller.new.get_temperatures   #fetch new temperatures
 
-      @temperatures.each do |key, value|      #save new temperatures
-        oldTemp = DataPoint.where(value_timestamp: format_date(key)).take
-        if oldTemp.nil?
-          DataPoint.create(:data_type => @dataType, :value_timestamp => format_date(key), :value => value)
-        else
-          if oldTemp.value != value
-            oldTemp.value = value
-            oldTemp.save!
-          end
-        end
-      end
+      # Fetch temps, precips, and save to db.
+      DataPoint.fetch_save_temp
 
-      update_settings                          #update settings with new values.
+      # @temperatures = WundergroundCaller.new.get_temperatures   #fetch new temperatures
+      # @precipitations = WundergroundCaller.new.get_precipitations
+      #
+      # @temperatures.each do |key, value|      #save new temperatures
+      #   oldTemp = DataPoint.where(value_timestamp: format_date(key)).take
+      #   if oldTemp.nil?
+      #     DataPoint.create(:data_type => @dataType, :value_timestamp => format_date(key), :value => value)
+      #   else
+      #     if oldTemp.value != value
+      #       oldTemp.value = value
+      #       oldTemp.save!
+      #     end
+      #   end
+      # end
+
+      update_settings                          #update settings with new values that were just saved in DB
       puts @new_packet = construct_packet           #generate new packet from new values.
 
       if @old_packet != @new_packet
@@ -46,6 +51,7 @@ class DataPointsController < ApplicationController
 
   private
 
+  #removed from controller TODO
   def format_date(epoch)
     Time.at(epoch.to_i).utc.to_datetime
   end
@@ -72,6 +78,7 @@ class DataPointsController < ApplicationController
 
     6.times do |i|
       values[i] = DataPoint.where(value_timestamp: Time.now.beginning_of_hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
+      puts values[i].id #for debugging
       if values[i].nil?
         values[i] = rand(20..80)
         value_min = 0
@@ -88,7 +95,8 @@ class DataPointsController < ApplicationController
     end
 
     values.each do |key,val|
-      position += "#{scale_position(val,value_min,value_max,90,10)},"
+      #position += "#{scale_position(val,value_min,value_max,90,10)},"
+      position += "#{val}," #for debugging, also comment out line above
     end
 
     return position.chop! #remove trailing comma
@@ -99,21 +107,7 @@ class DataPointsController < ApplicationController
   end
 
   def build_light
+
     return "20:40:40,40:40:40,40:40:40,40:40:40,40:40:40,40:40:40"
   end
 end
-
-
-
-
-
-
-# 6.times do |i|
-#   #Get correct datapoints. A bit complicated. Start by shifting back from NOW to get data points from the past. Adjusts based on Graph length in minutes.
-#   value = DataPoint.where(value_timestamp: Time.now.beginning_of_hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
-#   if value.nil?
-#     position += "0,"
-#   else
-#     position += "#{invert_scale_position(value.value.to_i)},"
-#   end
-#end
