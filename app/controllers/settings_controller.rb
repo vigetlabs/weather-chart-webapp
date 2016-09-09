@@ -31,4 +31,28 @@ class SettingsController < ApplicationController
     render :index
   end
 
+  def zipcode
+    Setting.first.update_attributes(:zipcode => params[:setting][:zipcode])
+    @new_packet = Setting.construct_packet
+    response = call_particle
+    flash.now[:success] = "Updated Zipcode: #{params[:setting][:zipcode]}"
+    render :index
+  end
+
+  def light
+    Setting.first.update_attributes(:light => params[:setting][:light])
+    @new_packet = Setting.construct_packet
+    response = call_particle
+    flash.now[:success] = "Updated Light: #{params[:setting][:light]}"
+    render :index
+  end
+
+  def call_particle
+      client = ParticleCaller.new(ENV["PARTICLE_DEVICE_ID"])
+      if client.function("trigger", @new_packet)
+        puts response_string = "SUCCESS - MADE PARTICLE CALL"
+      else
+        puts response_string = "FAILURE - TRIED PARTICLE CALL"
+      end
+    end
 end

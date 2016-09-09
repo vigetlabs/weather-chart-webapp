@@ -5,7 +5,13 @@
 </div>
 
 <h1>Weather Chart Interface</h1>
-<p>Display what type of data?</p>
+<p>Choose Zip Code</p>
+<%= form_for Setting.first, :url => settings_zipcode_path do |f| %>
+  <%= f.text_field :zipcode, :maxlength => 5, :size => 25 %>
+  <%= f.submit "Submit" %>
+<% end %>
+<br>
+<p>Display what type of data? (Y-Axis)</p>
 <% DataType.all.each do |type| %>
 <%= link_to "#{type.name}", settings_type_path(:data_type => type)%><br>
 <% end %>
@@ -26,6 +32,12 @@
 <br>
 <p>Update Chart (automatically every 5 minutes, or on trigger below)</p>
 <%= link_to "UPDATE NOW", data_points_path %><br>
+<br>
+<p>Choose your Lights:</p>
+<%= form_for Setting.first, :url => settings_light_path do |f| %>
+  <%= f.text_field :light %>
+  <%= f.submit "Submit" %>
+<% end %>
 <br>
 <p>Extras</p>
 <%= link_to "RAINBOW", settings_rainbow_path %><br>

@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   get 'settings/now'
   get 'settings/rainbow'
   get 'settings/worm'
+  patch 'settings/light'
+  patch 'settings/zipcode'
 
   get 'data_points/' => 'data_points#act'
 end
