@@ -5,15 +5,18 @@ class WundergroundCaller
 
   def get_hourly_weather(zipcode)
     zipcode = "80302" if zipcode.empty?
-    @w_api.hourly_for("#{zipcode}") #comment this out to save API call
+    @get_hourly_weather = @w_api.hourly_for("#{zipcode}")
   end
 
   def get_temperatures(zipcode)
     response = JSON.parse(get_hourly_weather(zipcode).to_json)
-    temp = {}
-    response['hourly_forecast'].each do |response|
-      time = response['FCTTIME']['epoch']
-      temp[time] = response['temp']['english']
+
+    if has_error(response)
+      temp = {}
+      response['hourly_forecast'].each do |response|
+        time = response['FCTTIME']['epoch']
+        temp[time] = response['temp']['english']
+      end
     end
 
     ## this is for testing purposes!
@@ -23,19 +26,30 @@ class WundergroundCaller
     return temp
   end
 
-  def get_precipitations()
-    response = JSON.parse(get_hourly_weather.to_json)
+  def get_precipitations(zipcode)
+    response = JSON.parse(get_hourly_weather(zipcode).to_json)
     precip = {}
     response['hourly_forecast'].each do |response|
       time = response['FCTTIME']['epoch']
-      precip[time] = response['mslp']['english'] #mslp = POP, Probability of Precipitation, qpf = Quantitative Precipitation Forecast
+      precip[time] = response['pop']#['english'] #mslp = POP, Probability of Precipitation, qpf = Quantitative Precipitation Forecast
     end
 
     ## this is for testing purposes!
     # precipitations = "{'1473372000'=>'30.07', '1473375600'=>'30.08', '1473379200'=>'30.09', '1473382800'=>'30.09', '1473386400'=>'30.09', '1473390000'=>'30.09', '1473393600'=>'30.09', '1473397200'=>'30.09', '1473400800'=>'30.08', '1473404400'=>'30.08', '1473408000'=>'30.09', '1473411600'=>'30.11', '1473415200'=>'30.12', '1473418800'=>'30.14', '1473422400'=>'30.16', '1473426000'=>'30.16', '1473429600'=>'30.16', '1473433200'=>'30.15', '1473436800'=>'30.12', '1473440400'=>'30.09', '1473444000'=>'30.07', '1473447600'=>'30.06', '1473451200'=>'30.05', '1473454800'=>'30.06', '1473458400'=>'30.07', '1473462000'=>'30.09', '1473465600'=>'30.11', '1473469200'=>'30.12', '1473472800'=>'30.12', '1473476400'=>'30.13', '1473480000'=>'30.13', '1473483600'=>'30.12', '1473487200'=>'30.11', '1473490800'=>'30.12', '1473494400'=>'30.13', '1473498000'=>'30.14'}"
     # precip = eval(precipitations) # convert json into hash
-    # #puts precip
 
     return precip
   end
+
+private
+
+  def has_error(response)
+    if response['response']['error'].nil?
+      puts response['response']['error']
+      true
+    else
+      false
+    end
+  end
+
 end

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root 'settings#index'
 
+  get 'party/' => 'settings#party'
   get 'settings/' => 'settings#index'
   get 'settings/index'
   get 'settings/type'

@@ -1,0 +1,23 @@
+<% flash.each do |key, value| %>
+  <div class="alert alert-<%= key %>"><b><%= value %></b></div>
+<% end %>
+
+<p>ENTER YOUR ZIPCODE (WEATHER FOR NEXT 6 HOURS)</p>
+<%= form_for Setting.first, :url => settings_zipcode_path do |f| %>
+  <%= f.text_field :zipcode, :maxlength => 5, :size => 25 %>
+  <%= f.submit "Submit" %>
+<% end %>
+<br>
+
+<p>Update Chart (automatically every 5 minutes, or on trigger below)</p>
+<%= link_to "UPDATE NOW", data_points_path %><br>
+<br>
+
+OR
+
+<p>CHOOSE AN EFFECT</p>
+<%= link_to "SMILE", settings_rainbow_path %><br>
+<%= link_to "FROWN", settings_rainbow_path %><br>
+<%= link_to "DO THE WORM", settings_rainbow_path %><br>
+<%= link_to "FLATIRONS AT SUNRISE", settings_rainbow_path %><br>
+<%= link_to "VIGET GA DATA", settings_rainbow_path %><br>

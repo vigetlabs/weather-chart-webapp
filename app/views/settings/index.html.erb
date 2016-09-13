@@ -22,6 +22,9 @@
 <%= link_to "180 minutes, 3 hour", settings_resolution_path(:x_res => 1080) %><br>
 <%= link_to "240 minutes, 4 hour", settings_resolution_path(:x_res => 1440) %><br>
 <br>
+<%
+=begin
+%>
 <p>Now (where to place CURRENT TIME from left to right 0-5)</p>
 <%= link_to "Now: 0 (far left)", settings_now_path(:now => 0 )%><br>
 <%= link_to "Now: 1", settings_now_path(:now => 1 )%><br>
@@ -30,6 +33,9 @@
 <%= link_to "Now: 4", settings_now_path(:now => 4 )%><br>
 <%= link_to "Now: 5 (far right)", settings_now_path(:now => 5 )%><br>
 <br>
+<%
+=end
+%>
 <p>Update Chart (automatically every 5 minutes, or on trigger below)</p>
 <%= link_to "UPDATE NOW", data_points_path %><br>
 <br>

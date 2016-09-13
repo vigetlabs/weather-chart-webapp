@@ -10,10 +10,10 @@ class ParticleCaller
 
   def function(function, param)
     ## pass ParticleRB the deivce ID as a string -- this doesn't work otherwise!
-    # request = Particle.device("#{@device}").function(function,param)
+    request = Particle.device("#{@device}").function(function,param)
 
     #for testing without bugging eli
-    return true
+    #return true
 
     rescue
   end

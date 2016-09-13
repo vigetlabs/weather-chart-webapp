@@ -3,16 +3,17 @@ class Setting < ActiveRecord::Base
 
   def self.regenerate
     @settings = Setting.first
-    @settings.update_attributes(:position => build_position, :light => build_light)
+    @value_min = 999
+    @value_max = -999
+
+    @position = build_position
+    @light = build_light
+    @settings.update_attributes(:position => @position, :light => @light)
   end
 
   def self.construct_packet
     settings = Setting.first
-
-    #packet = "#{settings.data_type.identifier}|"
-    #packet += "#{settings.now}|"
     packet = "#{settings.position}"
-    #packet += "#{settings.light}"
   end
 
   private
@@ -22,82 +23,104 @@ class Setting < ActiveRecord::Base
   end
 
   def self.build_position
+    real_position = ""
     position = ""
-
     values = {}
-    value_min = 999
-    value_max = -999
 
     6.times do |i|
-      values[i] = DataPoint.where(data_type: @settings.data_type).where(value_timestamp: Time.now.beginning_of_hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
-      #puts values[i].id #for debugging
+      # right now i'm adding an hour. i.e: 1:36PM Get's rounded up to 2:00 PM as the present time. That's because we're not fetching historic data.
+      values[i] = DataPoint.where(zipcode: @settings.zipcode).where(data_type: @settings.data_type).where(value_timestamp: Time.now.beginning_of_hour + 1.hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
+      values[i] = values[i].value
+
       if values[i].nil?
         values[i] = rand(20..80)
-        value_min = 0
-        value_max = 100
-      else
-        values[i] = values[i].value.to_f
-        if values[i] < value_min
-          value_min = values[i]
-        end
-        if values[i] > value_max
-          value_max = values[i]
-        end
+      end
+
+      # Once we start doing historic data, we'll need to handle the possibility for nil values[i].
+      if values[i] < @value_min
+        @value_min = values[i]
+      end
+      if values[i] > @value_max
+        @value_max = values[i]
       end
     end
-    values.each do |key,val| #build the string
-      position += "#{scale_position(val,value_min,value_max,90,10)},"
-      #position += "#{val}," #for debugging, also comment out line above
+
+    values.each do |key,val|
+      real_position += "#{val},"
+      position += "#{scale_position(val,@value_min,@value_max,90,10)}," #TODO pull scale out into own method
     end
+
+    puts "Real temperatures: #{real_position}"
+    puts "Positions for new packet: #{position}"
 
     return position.chop! #remove trailing comma
   end
 
-  def self.get_light_pos_string(segment) #0,1,2,3,4,5
+  def self.build_light
+    # red on highs, blues on lows, precip if rain?
+    light_string = "0,100,20,20,20,1,"
+    light_blue = ""
+    light_red = ""
+
+    case @settings.data_type.name
+      when "Temperature"
+        position_array = position_to_array(@position)
+        for i in 0..5
+          if position_array[i].to_f == scale_position(@value_min,@value_min,@value_max,90,10).to_f
+            light_blue = "#{get_light_pos_string(i)},20,0,60,2"
+          elsif position_array[i].to_f == scale_position(@value_max,@value_min,@value_max,90,10).to_f
+            light_red = "#{get_light_pos_string(i)},60,0,20,2"
+          end
+        end
+
+      light_string += "#{light_blue},#{light_red},"
+
+      #TODO, STAR T HERE 
+      # precip_array = precipitation_array
+      # binding.pry
+      # for i in 0..5
+      #   if segment has precipitation
+      #     light_precip = "#{get_light_pos_string(i)},60,60,100,1"
+      #   end
+      # end
+
+      when "Precipitation"
+       light_string = ""
+      end
+    return light_string.chop! #remove tailing comma
+  end
+
+  def self.position_to_array(position)
+    position.split(',')
+  end
+
+  # def self.precipitation_array
+  #   values = {}
+  #
+  #   6.times do |i|
+  #     array = DataPoint.where(data_type_id: 6).where(value_timestamp: Time.now.beginning_of_hour + 1.hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
+  #   end
+  #
+  #   values
+  # end
+
+private
+
+  def self.get_light_pos_string(segment)
     case segment
     when 0
-      "0,5"
+      return "0,10"
     when 1
-      "15,25"
+      return "10,30"
     when 2
-      "35,45"
+      return "30,50"
     when 3
-      "55,65"
+      return "50,70"
     when 4
-      "75,85"
+      return "70,90"
     when 5
-      "95,100"
+      return "90,100"
     end
   end
 
-  def self.build_light
-    light_data_type = DataType.where(name: "Precipitation")
-
-    values = {}
-    light = ""
-
-    6.times do |i|
-      values[i] = DataPoint.where(data_type: light_data_type).where(value_timestamp: Time.now.beginning_of_hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
-      values[i] = 0 if values[i].nil?
-    end
-
-    #loop through each, and check to see if it's above a threshold, if it is, set the segmetn/location color
-    values.each do |key,val|
-      if val.value <= 35
-        #light += ""
-      elsif val.value <= 67
-        light += "#{get_light_pos_string(key)},50,0,0,1,"
-      elsif val.value<= 85
-        light += "#{get_light_pos_string(key)},50,50,00,1,"
-      else
-        light += "#{get_light_pos_string(key)},50,50,50,1,"
-      end
-      light
-    end
-
-    light = "0,100,0,0,0,3" if light.empty? #if nothing is going on, do the rainbow
-
-    puts light
-    return light.chop!
-  end
 end
