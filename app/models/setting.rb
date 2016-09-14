@@ -67,7 +67,7 @@ class Setting < ActiveRecord::Base
         when "Precipitation"
           light_string = ""
       end
-    return light_string.chop!
+    return light_string
   end
 
   def self.position_to_array(position)
