@@ -5,6 +5,7 @@ class Setting < ActiveRecord::Base
     @settings = Setting.first
     @value_min = 999
     @value_max = -999
+    @temp_array = []
 
     @position = build_position
     @light = build_light
@@ -13,7 +14,7 @@ class Setting < ActiveRecord::Base
 
   def self.construct_packet
     settings = Setting.first
-    packet = settings.position
+    packet = "#{settings.position}"
   end
 
   private
@@ -29,7 +30,7 @@ class Setting < ActiveRecord::Base
 
     6.times do |i|
       # right now i'm adding an hour. i.e: 1:36PM Get's rounded up to 2:00 PM as the present time. That's because we're not fetching historic data.
-      values[i] = DataPoint.where(zipcode: @settings.zipcode).where(data_type: @settings.data_type).where(value_timestamp: Time.now.beginning_of_hour + 1.hour + (i.minutes * (@settings.x_res/6))).take
+      values[i] = DataPoint.where(zipcode: @settings.zipcode).where(data_type: @settings.data_type).where(value_timestamp: Time.now.beginning_of_hour + 1.hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
       values[i] = values[i].value
 
       if values[i].nil?
@@ -47,6 +48,7 @@ class Setting < ActiveRecord::Base
 
     values.each do |key,val|
       real_position += "#{val},"
+      @temp_array << val.to_i
       position += "#{scale_position(val,@value_min,@value_max,90,10)}," #TODO pull scale out into own method
     end
 
@@ -57,69 +59,37 @@ class Setting < ActiveRecord::Base
   end
 
   def self.build_light
-    # red on highs, blues on lows, precip if rain?
-    light_string = "0,100,20,20,20,1,"
-    light_blue = ""
-    light_red = ""
+    light_string = ""
 
-    case @settings.data_type.name
-      when "Temperature"
-        position_array = position_to_array(@position)
-        for i in 0..5
-          if position_array[i].to_f == scale_position(@value_min,@value_min,@value_max,90,10).to_f
-            light_blue = "#{get_light_pos_string(i)},20,0,60,2"
-          elsif position_array[i].to_f == scale_position(@value_max,@value_min,@value_max,90,10).to_f
-            light_red = "#{get_light_pos_string(i)},60,0,20,2"
-          end
-        end
-
-      light_string += "#{light_blue},#{light_red},"
-
-      #TODO, STAR T HERE
-      # precip_array = precipitation_array
-      # binding.pry
-      # for i in 0..5
-      #   if segment has precipitation
-      #     light_precip = "#{get_light_pos_string(i)},60,60,100,1"
-      #   end
-      # end
-
-      when "Precipitation"
-       light_string = ""
+      case @settings.data_type.name
+        when "Temperature"
+          light_string = @temp_array.to_csv.delete!("\n")
+        when "Precipitation"
+          light_string = ""
       end
-    return light_string.chop! #remove tailing comma
+    return light_string.chop!
   end
 
   def self.position_to_array(position)
     position.split(',')
   end
 
-  # def self.precipitation_array
-  #   values = {}
-  #
-  #   6.times do |i|
-  #     array = DataPoint.where(data_type_id: 6).where(value_timestamp: Time.now.beginning_of_hour + 1.hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
-  #   end
-  #
-  #   values
-  # end
-
 private
 
   def self.get_light_pos_string(segment)
     case segment
-    when 0
-      return "0,10"
-    when 1
-      return "10,30"
-    when 2
-      return "30,50"
-    when 3
-      return "50,70"
-    when 4
-      return "70,90"
-    when 5
-      return "90,100"
+      when 0
+        return "0,10"
+      when 1
+        return "10,30"
+      when 2
+        return "30,50"
+      when 3
+        return "50,70"
+      when 4
+        return "70,90"
+      when 5
+        return "90,100"
     end
   end
 

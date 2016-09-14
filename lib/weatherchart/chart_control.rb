@@ -24,10 +24,14 @@ class ChartControl
     end
 
     def call_particle(type)
+      @settings = Setting.first
       if @old_packet != @new_packet                 # Compare packets to see if something needs changed
         client = ParticleCaller.new(ENV["PARTICLE_DEVICE_ID"])
         if client.function("trigger", @new_packet)
           client.function("clear", "")
+          if @settings.data_type.name == "Temperature"
+            client.function("temperature", @settings.light)
+          end
           # parse_light_string(Setting.first.light).each do |effect|
           #   client.function("addEffect", effect.to_csv.chop!)
           # end
