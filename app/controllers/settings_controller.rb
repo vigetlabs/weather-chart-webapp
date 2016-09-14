@@ -5,6 +5,13 @@ class SettingsController < ApplicationController
   def party
   end
 
+  def update
+    Setting.first.update_attributes(params[:setting].permit!)
+    ChartControl.act
+
+    render :party
+  end
+
   def type
     data_type = DataType.find(params[:data_type])
     Setting.first.update_attributes(:data_type => data_type)

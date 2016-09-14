@@ -13,7 +13,7 @@ class Setting < ActiveRecord::Base
 
   def self.construct_packet
     settings = Setting.first
-    packet = "#{settings.position}"
+    packet = settings.position
   end
 
   private
@@ -29,7 +29,7 @@ class Setting < ActiveRecord::Base
 
     6.times do |i|
       # right now i'm adding an hour. i.e: 1:36PM Get's rounded up to 2:00 PM as the present time. That's because we're not fetching historic data.
-      values[i] = DataPoint.where(zipcode: @settings.zipcode).where(data_type: @settings.data_type).where(value_timestamp: Time.now.beginning_of_hour + 1.hour - @settings.now.hours + (i.minutes * (@settings.x_res/6))).take
+      values[i] = DataPoint.where(zipcode: @settings.zipcode).where(data_type: @settings.data_type).where(value_timestamp: Time.now.beginning_of_hour + 1.hour + (i.minutes * (@settings.x_res/6))).take
       values[i] = values[i].value
 
       if values[i].nil?
@@ -75,7 +75,7 @@ class Setting < ActiveRecord::Base
 
       light_string += "#{light_blue},#{light_red},"
 
-      #TODO, STAR T HERE 
+      #TODO, STAR T HERE
       # precip_array = precipitation_array
       # binding.pry
       # for i in 0..5

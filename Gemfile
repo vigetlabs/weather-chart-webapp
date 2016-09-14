@@ -13,6 +13,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem "particlerb", "~> 0.0.3"
 gem 'wunderground'
+gem "awesome_print"
 
 group :development do
   gem "quiet_assets",      "~> 1.1.0"

@@ -12,5 +12,7 @@ Rails.application.routes.draw do
   patch 'settings/light'
   patch 'settings/zipcode'
 
+  patch '/party', to: "settings#update"
+
   get 'data_points/' => 'data_points#act'
 end
