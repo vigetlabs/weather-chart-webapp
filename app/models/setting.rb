@@ -21,7 +21,9 @@ class Setting < ActiveRecord::Base
   private
 
   def self.scale_position(pos,in_min,in_max,out_min,out_max)
-    return ((pos - in_min) * (out_max - out_min) / (in_max - in_min) + out_min).to_i
+    ((pos - in_min) * (out_max - out_min) / (in_max - in_min) + out_min).to_i
+  rescue
+    [[100 - pos, 100].min, 0].max
   end
 
   def self.build_position
