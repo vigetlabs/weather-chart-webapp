@@ -14,8 +14,8 @@ class Setting < ActiveRecord::Base
 
   def self.construct_packet
     settings = Setting.first
-    packet = "#{settings.position}"
-    #packet += "#{settings.light}"
+    packet = "#{settings.position};"
+    packet += "#{settings.light}"
   end
 
   private
