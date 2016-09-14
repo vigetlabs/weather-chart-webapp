@@ -25,10 +25,9 @@ class ChartControl
 
     def call_particle(type)
       @settings = Setting.first
-      if @old_packet != @new_packet                 # Compare packets to see if something needs changed
         client = ParticleCaller.new(ENV["PARTICLE_DEVICE_ID"])
         if client.function("trigger", @new_packet)
-          client.function("clear", "")
+          #client.function("clear", "")
           if @settings.data_type.name == "Temperature"
             client.function("temperature", @settings.light)
           end
@@ -39,9 +38,6 @@ class ChartControl
         else
           response_string = "FAILURE - TRIED TO UPDATE WEATHER WALL"
         end
-      else
-        response_string = "DID NOT UPDATE WEATHER WALL (SETTINGS HAVE NOT CHANGED)"
-      end
 
       return response_string
     end
