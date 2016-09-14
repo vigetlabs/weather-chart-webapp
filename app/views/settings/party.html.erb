@@ -1,7 +1,7 @@
 <div style="text-align: center; margin-top: 200px;">
   <h1>ENTER YOUR ZIPCODE</h1>
   <%= form_for Setting.first, :url => party_path do |f| %>
-    <%= f.text_field :zipcode, :maxlength => 5, :size => 25 %>
+    <%= f.text_field :zipcode, :size => 25 %>
     <%= f.submit "Submit" %>
   <% end %>
 
