@@ -16,6 +16,7 @@ module Weatherchart
 
     config.assets.enabled = true
     config.assets.paths << Rails.root.join('/app/assets/fonts')
+    config.assets.precompile += %w(.svg .eot .woff .ttf)
 
     config.generators do |g|
       g.assets false
