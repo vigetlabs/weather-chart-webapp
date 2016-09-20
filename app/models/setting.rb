@@ -9,13 +9,15 @@ class Setting < ActiveRecord::Base
 
     @position = build_position
     @light = build_light
-    @settings.update_attributes(:position => @position, :light => @light)
+    @location_key = find_location_key
+    @settings.update_attributes(:position => @position, :light => @light, :location_key => @location_key)
   end
 
   def self.construct_packet
     settings = Setting.first
     packet = "#{settings.position};"
-    packet += "#{settings.light}"
+    packet += "#{settings.light};"
+    packet += "#{settings.location_key}"
   end
 
   private
@@ -75,6 +77,22 @@ class Setting < ActiveRecord::Base
 
   def self.position_to_array(position)
     position.split(',')
+  end
+
+  def self.find_location_key
+    zipcode = @settings.zipcode
+
+    if zipcode.match /boulder/i
+      1
+    elsif zipcode.match /8030/
+      1
+    elsif zipcode.match /falls church/i
+      2
+    elsif zipcode.match /durham/i
+      3
+    else
+      4
+    end
   end
 
 private
