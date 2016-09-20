@@ -14,6 +14,7 @@ module Weatherchart
 
     config.autoload_paths += %W(#{config.root}/lib/weatherchart)
 
+    config.assets.enabled = true
     config.assets.paths << Rails.root.join('/app/assets/fonts')
 
     config.generators do |g|
