@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root 'settings#index'
+  root 'settings#party'
 
   get 'party/' => 'settings#party'
   get 'settings/' => 'settings#index'

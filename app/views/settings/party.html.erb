@@ -1,9 +1,7 @@
-<div style="text-align: center; margin-top: 200px;">
-  <h1>ENTER YOUR ZIPCODE</h1>
-  <%= form_for Setting.first, :url => party_path do |f| %>
+<%= image_tag "ipad.jpg", class: "bg-image" %>
+<div id="wrapper">
+  <div class="location"><%= Setting.first.zipcode %></div>
+  <%= form_for Setting.first, :url => party_path, html: {class: "location-form"} do |f| %>
     <%= f.text_field :zipcode, :size => 25 %>
-    <%= f.submit "Submit" %>
   <% end %>
-
-  <h2>Current Location: <%= Setting.first.zipcode %></h2>
 </div>

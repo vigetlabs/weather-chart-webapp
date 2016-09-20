@@ -1,0 +1,74 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+$gold: #95723e;
+
+body {
+  margin: 0;
+  font-family: 'Rosewood Fill';
+  font-size: 42px;
+}
+
+@font-face {
+  font-family: 'Rosewood Fill';
+  src: url('/assets/Rosewood Fill.ttf') format('truetype');
+}
+
+.bg-image {
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#wrapper {
+  position:absolute;
+  z-index:1;
+  background:transparent;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: $gold;
+}
+
+.location {
+  position: fixed;
+  top: 485px;
+  left: 5px;
+  width: 100%;
+  font-size: 42px;
+}
+
+.location-form {
+  position: fixed;
+  top: 734px;
+  left: 5px;
+  width: 100%;
+
+  input {
+    line-height: 40px;
+    width: 220px;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    color: $gold;
+  }
+}
