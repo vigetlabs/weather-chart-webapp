@@ -6,8 +6,15 @@ class SettingsController < ApplicationController
   end
 
   def update
-    Setting.first.update_attributes(params[:setting].permit!)
-    ChartControl.act
+    ActiveRecord::Base.transaction do
+      begin
+        Setting.first.update_attributes(params[:setting].permit!)
+        ChartControl.act
+      rescue
+        flash[:error] = "That location couldn't be found"
+        raise ActiveRecord::Rollback
+      end
+    end
 
     render :party
   end

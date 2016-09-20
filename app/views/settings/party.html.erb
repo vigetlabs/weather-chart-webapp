@@ -1,7 +1,10 @@
 <%= image_tag "ipad.jpg", class: "bg-image" %>
 <div id="wrapper">
+  <% if flash[:error] %>
+    <div class="error-flash"><%= flash[:error] %></div>
+  <% end %>
   <div class="location"><%= Setting.first.zipcode %></div>
   <%= form_for Setting.first, :url => party_path, html: {class: "location-form"} do |f| %>
-    <%= f.text_field :zipcode, :size => 25 %>
+    <%= f.text_field :zipcode, :size => 25, class: "location-input" %>
   <% end %>
 </div>

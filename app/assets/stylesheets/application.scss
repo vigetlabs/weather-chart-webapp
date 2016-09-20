@@ -19,12 +19,18 @@ $gold: #95723e;
 body {
   margin: 0;
   font-family: 'Rosewood Fill';
-  font-size: 42px;
 }
 
 @font-face {
   font-family: 'Rosewood Fill';
   src: url('/assets/Rosewood Fill.ttf') format('truetype');
+}
+
+.error-flash {
+  background: white;
+  opacity: 0.8;
+  line-height: 100px;
+  font-size: 40px;
 }
 
 .bg-image {

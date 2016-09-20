@@ -14,3 +14,13 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require_tree .
+
+if ($(".error-flash").length) {
+  setTimeout(function() {
+    $(".error-flash").slideUp()
+  }, 3000);
+}
+
+$(".location-input").on("focus", function() {
+  $(".location-input").val("")
+})
